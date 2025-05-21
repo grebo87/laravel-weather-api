@@ -1,0 +1,1015 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Weather API Documentation",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "login user",
+                "description": "Login endpoint for user",
+                "operationId": "login",
+                "parameters": [
+                    {
+                        "name": "Accept",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "default": "application/json"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user-test@app.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginAndRegisterResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnprocessableEntityError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "logout user",
+                "description": "Logout endpoint for user",
+                "operationId": "logout",
+                "responses": {
+                    "204": {
+                        "description": "Logout Successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new user",
+                "description": "Register a new user with the provided information",
+                "operationId": "register",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "first_name",
+                                    "last_name",
+                                    "password",
+                                    "password_confirmation"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "first_name": {
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "last_name": {
+                                        "type": "string",
+                                        "example": "Doe"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "User registered successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginAndRegisterResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnprocessableEntityError"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/favorites": {
+            "get": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Get user's favorite cities",
+                "description": "Returns a list of the authenticated user's favorite cities",
+                "operationId": "getFavoriteCities",
+                "responses": {
+                    "200": {
+                        "description": "List of favorite cities retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FavoriteResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Add a city to user's favorites",
+                "description": "Adds a city to the authenticated user's list of favorite cities",
+                "operationId": "addFavoriteCity",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "city_name"
+                                ],
+                                "properties": {
+                                    "city_name": {
+                                        "type": "string",
+                                        "example": "carupano"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "City added to favorites successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FavoriteResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "properties": {
+                                                "city_name": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string",
+                                                        "example": "The city name field is required."
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/favorites/{id}": {
+            "delete": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Remove a city from user's favorites",
+                "description": "Removes a city from the authenticated user's list of favorite cities",
+                "operationId": "deleteFavoriteCity",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the favorite to remove",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "City removed from favorites successfully"
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden - User doesn't own the favorite",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "You don't have permission to delete this favorite."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Favorite not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Favorite not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/history": {
+            "get": {
+                "tags": [
+                    "History"
+                ],
+                "summary": "Get user's weather search history",
+                "description": "Returns a list of weather searches made by the authenticated user",
+                "operationId": "getSearchHistory",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of history items to return (default: 10)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10,
+                            "maximum": 100,
+                            "minimum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Search history retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 5
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer",
+                                                        "example": 12
+                                                    },
+                                                    "city_name": {
+                                                        "type": "string",
+                                                        "example": "Yaguaraparo"
+                                                    },
+                                                    "weather_summary": {
+                                                        "properties": {
+                                                            "temp_c": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 28.1
+                                                            },
+                                                            "humidity": {
+                                                                "type": "integer",
+                                                                "example": 100
+                                                            },
+                                                            "wind_kph": {
+                                                                "type": "number",
+                                                                "format": "float",
+                                                                "example": 13.7
+                                                            },
+                                                            "localtime": {
+                                                                "type": "string",
+                                                                "example": "2025-05-20 19:22"
+                                                            },
+                                                            "condition_text": {
+                                                                "type": "string",
+                                                                "example": "Patchy rain nearby"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "searched_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2025-05-20T23:23:13+00:00"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/user": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get authenticated user's data",
+                "description": "Returns the authenticated user's profile information",
+                "operationId": "getUserData",
+                "responses": {
+                    "200": {
+                        "description": "User data retrieved successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 42
+                                                },
+                                                "first_name": {
+                                                    "type": "string",
+                                                    "example": "John"
+                                                },
+                                                "last_name": {
+                                                    "type": "string",
+                                                    "example": "Doe"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "format": "email",
+                                                    "example": "john.doe@example.com"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-01-15T10:30:00+00:00"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2025-05-01T14:22:15+00:00"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/weather": {
+            "get": {
+                "tags": [
+                    "Weather"
+                ],
+                "summary": "Get weather for a city",
+                "description": "Returns current weather information for the specified city",
+                "operationId": "getWeatherByCity",
+                "parameters": [
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "City name",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Yaguaraparo"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WeatherResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request - Missing or invalid city parameter",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The city field is required."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "City not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Weather data not found for the specified city. It might be an invalid city name or an API issue."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InternalServerError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "FavoriteResponse": {
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "user_id": {
+                                    "type": "integer",
+                                    "example": 12
+                                },
+                                "city_name": {
+                                    "type": "string",
+                                    "example": "Yaguaraparo"
+                                },
+                                "added_at": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "example": "2025-05-20T23:30:24+00:00"
+                                }
+                            },
+                            "type": "object"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "InternalServerError": {
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Server Error"
+                    }
+                },
+                "type": "object"
+            },
+            "InternalServerErrorDetails": {
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "example": "500"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Internal Server Error"
+                    }
+                },
+                "type": "object"
+            },
+            "LoginAndRegisterResponse": {
+                "properties": {
+                    "access_token": {
+                        "type": "string",
+                        "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+                    },
+                    "token_type": {
+                        "type": "string",
+                        "example": "bearer"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Login successful"
+                    },
+                    "user": {
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "first_name": {
+                                "type": "string",
+                                "example": "John"
+                            },
+                            "last_name": {
+                                "type": "string",
+                                "example": "Doe"
+                            },
+                            "email": {
+                                "type": "string",
+                                "format": "email",
+                                "example": "user@example.com"
+                            },
+                            "email_verified_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2025-05-20T18:50:54.000000Z",
+                                "nullable": true
+                            },
+                            "created_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2025-05-20T18:50:54.000000Z"
+                            },
+                            "updated_at": {
+                                "type": "string",
+                                "format": "date-time",
+                                "example": "2025-05-20T18:50:54.000000Z"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "UnprocessableEntityError": {
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "message error example"
+                    }
+                },
+                "type": "object"
+            },
+            "WeatherResponse": {
+                "properties": {
+                    "data": {
+                        "properties": {
+                            "location": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Yaguaraparo"
+                                    },
+                                    "region": {
+                                        "type": "string",
+                                        "example": "Sucre"
+                                    },
+                                    "country": {
+                                        "type": "string",
+                                        "example": "Venezuela"
+                                    },
+                                    "localtime": {
+                                        "type": "string",
+                                        "example": "2025-05-20 17:27"
+                                    },
+                                    "lat": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 10.5689
+                                    },
+                                    "lon": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": -62.8239
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "current_weather": {
+                                "properties": {
+                                    "temperature_celsius": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 30.1
+                                    },
+                                    "temperature_fahrenheit": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 86.2
+                                    },
+                                    "condition_text": {
+                                        "type": "string",
+                                        "example": "Patchy rain nearby"
+                                    },
+                                    "condition_icon": {
+                                        "type": "string",
+                                        "format": "uri",
+                                        "example": "https://cdn.weatherapi.com/weather/64x64/day/176.png"
+                                    },
+                                    "wind_kph": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 15.5
+                                    },
+                                    "wind_mph": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 9.6
+                                    },
+                                    "wind_direction": {
+                                        "type": "string",
+                                        "example": "E"
+                                    },
+                                    "pressure_mb": {
+                                        "type": "integer",
+                                        "example": 1011
+                                    },
+                                    "humidity_percent": {
+                                        "type": "integer",
+                                        "example": 100
+                                    },
+                                    "cloud_cover_percent": {
+                                        "type": "integer",
+                                        "example": 0
+                                    },
+                                    "feels_like_celsius": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 36.4
+                                    },
+                                    "visibility_km": {
+                                        "type": "integer",
+                                        "example": 9
+                                    },
+                                    "uv_index": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 0.9
+                                    },
+                                    "gust_kph": {
+                                        "type": "integer",
+                                        "example": 22
+                                    },
+                                    "last_updated": {
+                                        "type": "string",
+                                        "example": "2025-05-20 17:15"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "sanctum": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Favorites",
+            "description": "Favorites"
+        },
+        {
+            "name": "History",
+            "description": "History"
+        },
+        {
+            "name": "User",
+            "description": "User"
+        },
+        {
+            "name": "Weather",
+            "description": "Weather"
+        }
+    ]
+}
